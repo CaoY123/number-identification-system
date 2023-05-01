@@ -4,6 +4,7 @@ import com.mine.cni.domain.User;
 import com.mine.cni.domain.base.JsonResult;
 import com.mine.cni.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,9 @@ public class UserController extends CommonUserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping(value = "list")
     @ResponseBody
@@ -55,7 +59,7 @@ public class UserController extends CommonUserController {
         user = userService.findById(user.getId());
         if (user == null) {
             return new JsonResult(false, "用户不存在或已被删除");
-        } else if (!user.getPassword().equals(oldPass)) {
+        } else if (!passwordEncoder.matches(oldPass, user.getPassword())) {
             return new JsonResult(false, "原密码错误");
         }
 

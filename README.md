@@ -9,4 +9,4 @@
 
 
 ## 配置的全局变量（开发时需要配置在IDEA的Environment variables中，部署时需要配置在服务器的全局变量中）
-MY_SECRET_PASSWORD // 主密码（Jasypt加密配置信息时的密钥，自己定义的字符串，用于加密）
+MY_SECRET_PASSWORD // 主密码（Jasypt加密配置信息时的密钥，自己定义的字符串，用于加密），注意在运行单元测试的时候也要加上相应的全局配置。

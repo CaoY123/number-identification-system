@@ -1,11 +1,14 @@
 package com.mine.cni.controller.user;
 
+import cn.hutool.core.date.LocalDateTimeUtil;
 import com.mine.cni.domain.User;
 import com.mine.cni.domain.base.JsonResult;
+import com.mine.cni.enums.DateTimeFormatterEnums;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class CommonUserController {
@@ -40,7 +43,7 @@ public class CommonUserController {
                 return new JsonResult(false, "密码不能为空");
             }
             user.setRole(0); // 设置默认为普通用户
-            user.setLastLoginTime((new Date()).toString()); // 设置最新的登录时间
+            user.setLastLoginTime(LocalDateTimeUtil.format(LocalDateTime.now(), DateTimeFormatterEnums.YYYY_MM_DD_HH_MM_SS.getPattern())); // 设置最新的登录时间
         }
         return new JsonResult(true);
     }

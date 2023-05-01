@@ -8,14 +8,6 @@ import java.util.List;
 
 @Mapper
 public interface UserDAO {
-    /**
-     * find
-     * excepting the password
-     * @param name
-     * @param password
-     * @return
-     */
-    public User find(@Param("name") String name, @Param("password") String password);
 
     /**
      * find all user
@@ -52,4 +44,10 @@ public interface UserDAO {
      */
     public boolean deleteById(int id);
 
+    /**
+     * find by name
+     * @param name
+     * @return
+     */
+    public User findByName(String name);
 }
