@@ -1,0 +1,42 @@
+Configuration:
+  status: info # 表示只记录警告和错误信息
+  name: number-identification-system  # 为配置命名，通常可以设置为应用程序名称
+  packages: com.mine.cni # 指定应用程序的包名，用于扫描自定义 Appender、Layout、Filter 等组件
+  appenders:
+    Console:
+      - name: ConsoleAppender
+        target: SYSTEM_OUT
+        PatternLayout:
+          pattern: "%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %c{1} - %m%n"
+    RollingFile:
+      - name: RollingFileAppender
+        fileName: logs/app.log
+        filePattern: /logs/app-%d{yyyy-MM-dd, -1}.log.gz
+        PatternLayout:
+          pattern: "%d{yyyy-MM-dd HH:mm:ss} [%t] %-5p %c{1} - %m%n"
+        Policies:
+          TimeBasedTriggeringPolicy:
+            interval: 1 # 基于时间的滚动，时间间隔为1天
+            modulate: true # 是否调整滚动时间。modulate: true 表示日志文件将在每天的凌晨（00:00）滚动
+        DefaultRolloverStrategy:
+          max: 30 # 定义日志滚动时的操作策略。保留的最大滚动日志文件数量，
+          fileIndex: min # 定义滚动日志文件的命名方式，这里表示在滚动时，将按照日志文件名称升序排列
+          Delete:
+            basePath: logs # 定义删除策略。日志文件的基本路径
+            maxDepth: 1 # 目录扫描的最大深度
+            IfFileName:
+              glob: "app-*.log.gz" # 基于文件名的删除条件，glob：使用通配符匹配文件名
+            IfLastModified:
+              age: 30d # 文件的最大保留时间
+  loggers:
+    logger:
+      - name: com.mine.cni
+        level: debug
+        additivity: false
+        appenderRef:
+          - ref: ConsoleAppender # 关联 ConsoleAppender
+          - ref: RollingFileAppender # 关联 RollingFileAppender
+    root:
+      level: info # 设置全局默认日志级别为 error
+      appenderRef:
+        - ref: ConsoleAppender # 关联 ConsoleAppender
