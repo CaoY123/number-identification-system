@@ -103,6 +103,12 @@
             <artifactId>hutool-all</artifactId>
             <version>5.7.22</version>
         </dependency>
+        <!--jasypt加密数据库密码等敏感信息-->
+        <dependency>
+            <groupId>com.github.ulisesbocchio</groupId>
+            <artifactId>jasypt-spring-boot-starter</artifactId>
+            <version>3.0.3</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
