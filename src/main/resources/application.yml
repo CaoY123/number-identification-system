@@ -15,6 +15,10 @@ spring:
       write-dates-as-timestamps: true
   thymeleaf:
     cache: false
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 25MB
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml

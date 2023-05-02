@@ -9,4 +9,7 @@
 
 
 ## 配置的全局变量（开发时需要配置在IDEA的Environment variables中，部署时需要配置在服务器的全局变量中）
-MY_SECRET_PASSWORD // 主密码（Jasypt加密配置信息时的密钥，自己定义的字符串，用于加密），注意在运行单元测试的时候也要加上相应的全局配置。
+1) MY_SECRET_PASSWORD // 主密码（Jasypt加密配置信息时的密钥，自己定义的字符串，用于加密），注意在运行单元测试的时候也要加上相应的全局配置。  
+2) CONDA_ENVIRONMENT_NAME // conda 虚拟环境的名称  
+3) CONDA_EXECUTABLE_PATH // conda 命令的执行文件的绝对路径，一般为 Anaconda安装路径下\app\condabin\conda.bat  
+4) WORKING_DIRECTORY_PATH // 用python编写的识别项目所在的绝对路径

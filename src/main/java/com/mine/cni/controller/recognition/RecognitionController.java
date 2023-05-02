@@ -1,5 +1,6 @@
 package com.mine.cni.controller.recognition;
 
+import com.mine.cni.PythonCoreCaller;
 import com.mine.cni.controller.user.CommonUserController;
 import com.mine.cni.domain.User;
 import com.mine.cni.domain.base.JsonResult;
@@ -26,8 +27,8 @@ import java.nio.file.Paths;
 @RestController
 @RequestMapping("/recognize")
 public class RecognitionController extends CommonUserController {
-
-    private static final String UPLOAD_FOLDER = "uploads/";
+    // 这里直接固定上传图片的路径，是为了后面的python识别代码的方便
+    private static final String UPLOAD_FOLDER = "python/container-number-identification/datasets/test";
 
     @GetMapping("")
     public ModelAndView work(HttpServletRequest request, HttpServletResponse response) {
@@ -64,7 +65,9 @@ public class RecognitionController extends CommonUserController {
 
             // Perform your image processing here
             System.out.println("图片处理中......................");
+            String result = PythonCoreCaller.run(filePath.toFile().getAbsolutePath());
 
+            System.out.println("result:" + result);
             return new JsonResult(true, "图片接收成功并处理");
         } catch (IOException e) {
             e.printStackTrace();
