@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Upload Demo</title>
+
+    <script src="./jquery-3.3.1.min.js"></script>
+    <script src="./vue.min.js"></script>
+    <script src="./vue-resource.min.js"></script>
+    <script src="./element-ui/lib/index.js"></script>
+    <link rel="stylesheet" href="./element-ui/lib/theme-chalk/index.css"/>
+
+    <link rel="icon" type="image/ico" href="./favicon.ico">
+</head>
+<body>
+<div id="imageUpload" style="text-align: center;">
+    <div style="margin: 120px auto 0;width: 500px;">
+        <el-container>
+            <el-header>图片上传系统</el-header>
+            <el-main>
+                <el-form ref="imageUploadForm" :model="imageUploadForm" v-show="imageUploadVisible"
+                         hide-required-asterisk="false" label-width="80px">
+                    <el-form-item label="选择图片" prop="image">
+                        <input type="file" @change="onImageChange"> <!-- 修改为原生 input 标签 -->
+                    </el-form-item>
+
+                    <el-form-item>
+                        <el-button type="primary" v-on:click="uploadImage">上传图片</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-main>
+        </el-container>
+        <el-footer>
+            @CopyRight 2023 by YourName.
+        </el-footer>
+    </div>
+</div>
+<script>
+    let vm = new Vue({
+        el: '#imageUpload',
+        data: {
+            imageUploadForm: {
+                image: null
+            },
+            imageUploadVisible: true
+        },
+        methods: {
+            onImageChange: function (event) {
+                this.imageUploadForm.image = event.target.files[0];
+            },
+            uploadImage: function () {
+                if (!this.imageUploadForm.image) {
+                    this.$message.error('请选择一张图片');
+                    return false;
+                }
+
+                let formData = new FormData();
+                formData.append("file", this.imageUploadForm.image); // 将 "image" 改为 "file"
+
+                let _this = this;
+                $.ajax({
+                    url: '/api/recognize/upload', // 更改为您的图片上传接口
+                    type: 'POST',
+                    async: true,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    success: function (data) {
+                        console.log('success:' + JSON.stringify(data));
+                        if (data.success) {
+                            _this.$message.success('图片上传成功');
+                        } else {
+                            _this.$message.error(data.msg);
+                        }
+                    },
+                    error: function (data) {
+                        console.log('error:' + JSON.stringify(data));
+                        _this.$message.error('图片上传失败');
+                    }
+                });
+            }
+
+        }
+    });
+</script>
+
+<style>
+    a {
+        color: #409EFF;
+        cursor: pointer;
+        text-decoration-line: underline;
+    }
+</style>
+</body>
+</html>

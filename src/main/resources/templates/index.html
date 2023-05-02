@@ -128,7 +128,8 @@
                                 console.log('success:' + JSON.stringify(data));
                                 if (data.success) {
                                     window.localStorage.setItem('user', JSON.stringify(data.data.user));
-                                    window.location.href = '/api/admin';
+                                    // window.location.href = '/api/admin';
+                                    window.location.href = '/api/recognize';
                                 } else {
                                     _this.$message.error(data.msg);
                                 }
