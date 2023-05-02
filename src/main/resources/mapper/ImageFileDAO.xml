@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mine.cni.dao.ImageFileDAO">
+    <resultMap id="ImageFileResultMap" type="com.mine.cni.domain.ImageFile">
+        <id property="id" column="id" />
+        <result property="path" column="path" />
+        <result property="code" column="code" />
+        <result property="flag" column="flag" />
+        <result property="uploadTime" column="upload_time" />
+    </resultMap>
+    <select id="findAll" resultMap="ImageFileResultMap">
+        SELECT  id, path, code, flag, upload_time
+        FROM image_file
+    </select>
+
+    <select id="findById" resultMap="ImageFileResultMap">
+        SELECT  id, path, code, flag, upload_time
+        FROM image_file
+        WHERE id = #{id}
+    </select>
+
+    <delete id="deleteById">
+        DELETE FROM image_file
+        WHERE id = #{id}
+    </delete>
+
+    <select id="findByPath" resultMap="ImageFileResultMap">
+        SELECT  id, path, code, flag, upload_time
+        FROM image_file
+        WHERE path = #{path}
+    </select>
+
+    <insert id="insert" parameterType="com.mine.cni.domain.ImageFile">
+        <selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO image_file
+        <trim prefix="(" suffixOverrides="," suffix=")">
+            <if test="path != null">path, </if>
+            <if test="code != null">code, </if>
+            <if test="flag != null">flag, </if>
+            <if test="uploadTime != null">upload_time </if>
+        </trim>
+
+        <trim prefix="VALUES (" suffixOverrides="," suffix=")">
+            <if test="path != null">#{path}, </if>
+            <if test="code != null">#{code}, </if>
+            <if test="flag != null">#{flag}, </if>
+            <if test="uploadTime != null">#{uploadTime}, </if>
+        </trim>
+    </insert>
+
+    <update id="update" parameterType="com.mine.cni.domain.User">
+        UPDATE image_file
+        <set>
+            <if test="path != null">path = #{path}, </if>
+            <if test="code != null">code = #{code}, </if>
+            <if test="flag != null">flag = #{flag}, </if>
+            <if test="uploadTime != null">upload_time = #{uploadTime}, </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+</mapper>

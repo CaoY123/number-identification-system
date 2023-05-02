@@ -3,31 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>Image Upload Demo</title>
-
     <script src="./jquery-3.3.1.min.js"></script>
     <script src="./vue.min.js"></script>
     <script src="./vue-resource.min.js"></script>
     <script src="./element-ui/lib/index.js"></script>
     <link rel="stylesheet" href="./element-ui/lib/theme-chalk/index.css"/>
-
     <link rel="icon" type="image/ico" href="./favicon.ico">
 </head>
 <body>
 <div id="imageUpload" style="text-align: center;">
     <div style="margin: 120px auto 0;width: 500px;">
         <el-container>
-            <el-header>图片上传系统</el-header>
+            <el-header>集装箱编号识别系统</el-header>
             <el-main>
-                <el-form ref="imageUploadForm" :model="imageUploadForm" v-show="imageUploadVisible"
-                         hide-required-asterisk="false" label-width="80px">
-                    <el-form-item label="选择图片" prop="image">
-                        <input type="file" @change="onImageChange"> <!-- 修改为原生 input 标签 -->
-                    </el-form-item>
+                <div class="upload-container">
+                    <img v-if="imageSrc" :src="imageSrc" class="uploaded-image">
+                    <el-form ref="imageUploadForm" :model="imageUploadForm" v-show="imageUploadVisible"
+                             hide-required-asterisk="false" label-width="80px">
+                        <el-form-item class="select-image-button" label="选择图片" prop="image">
+                            <input type="file" @change="onImageChange">
+                        </el-form-item>
 
-                    <el-form-item>
-                        <el-button type="primary" v-on:click="uploadImage">上传图片</el-button>
-                    </el-form-item>
-                </el-form>
+                        <el-form-item class="upload-image-button">
+                            <el-button type="primary" v-on:click="uploadImage">识别编号</el-button>
+                        </el-form-item>
+                    </el-form>
+                    <div class="recognized-text-container">
+                        <el-input
+                                type="textarea"
+                                :rows="4"
+                                placeholder="识别结果将显示在这里"
+                                v-model="recognizedText"
+                                readonly
+                                style="resize: none; font-size: 30px;">
+                        </el-input>
+                    </div>
+                </div>
             </el-main>
         </el-container>
         <el-footer>
@@ -42,11 +53,18 @@
             imageUploadForm: {
                 image: null
             },
-            imageUploadVisible: true
+            imageUploadVisible: true,
+            imageSrc: null,
+            recognizedText: ''
         },
         methods: {
             onImageChange: function (event) {
                 this.imageUploadForm.image = event.target.files[0];
+                let reader = new FileReader();
+                reader.readAsDataURL(this.imageUploadForm.image);
+                reader.onload = (event) => {
+                    this.imageSrc = event.target.result;
+                };
             },
             uploadImage: function () {
                 if (!this.imageUploadForm.image) {
@@ -55,11 +73,11 @@
                 }
 
                 let formData = new FormData();
-                formData.append("file", this.imageUploadForm.image); // 将 "image" 改为 "file"
+                formData.append("file", this.imageUploadForm.image);
 
                 let _this = this;
                 $.ajax({
-                    url: '/api/recognize/upload', // 更改为您的图片上传接口
+                    url: '/api/recognize/upload',
                     type: 'POST',
                     async: true,
                     cache: false,
@@ -67,11 +85,13 @@
                     processData: false,
                     data: formData,
                     success: function (data) {
-                        console.log('success:' + JSON.stringify(data));
                         if (data.success) {
                             _this.$message.success('图片上传成功');
-                        } else {
-                            _this.$message.error(data.msg);
+                            if (data.data) { // 使用 data.data 而不是 data.recognizedText
+                                _this.recognizedText = data.data;
+                            } else {
+                                _this.$message.error('无法获取识别结果');
+                            }
                         }
                     },
                     error: function (data) {
@@ -80,7 +100,6 @@
                     }
                 });
             }
-
         }
     });
 </script>
@@ -90,6 +109,28 @@
         color: #409EFF;
         cursor: pointer;
         text-decoration-line: underline;
+    }
+
+    .upload-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .uploaded-image {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 20px;
+    }
+
+    .select-image-button,
+    .upload-image-button {
+        width: 100%;
+    }
+
+    .recognized-text-container {
+        width: 100%;
+        margin-top: 20px;
     }
 </style>
 </body>

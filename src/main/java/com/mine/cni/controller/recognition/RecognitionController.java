@@ -1,16 +1,21 @@
 package com.mine.cni.controller.recognition;
 
+import cn.hutool.core.date.LocalDateTimeUtil;
 import com.mine.cni.PythonCoreCaller;
 import com.mine.cni.controller.user.CommonUserController;
+import com.mine.cni.domain.ImageFile;
 import com.mine.cni.domain.User;
 import com.mine.cni.domain.base.JsonResult;
+import com.mine.cni.enums.DateTimeFormatterEnums;
 import com.mine.cni.enums.ExceptionEnums;
+import com.mine.cni.enums.RecogCodeEnums;
 import com.mine.cni.exception.SystemException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.mine.cni.service.ImageFileService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 
 /**
  * @author CaoY
@@ -27,6 +33,10 @@ import java.nio.file.Paths;
 @RestController
 @RequestMapping("/recognize")
 public class RecognitionController extends CommonUserController {
+
+    @Autowired
+    private ImageFileService imageFileService;
+
     // 这里直接固定上传图片的路径，是为了后面的python识别代码的方便
     private static final String UPLOAD_FOLDER = "python/container-number-identification/datasets/test";
 
@@ -65,10 +75,24 @@ public class RecognitionController extends CommonUserController {
 
             // Perform your image processing here
             System.out.println("图片处理中......................");
-            String result = PythonCoreCaller.run(filePath.toFile().getAbsolutePath());
+            String imageFilePath = filePath.toFile().getAbsolutePath();
+            String result = PythonCoreCaller.run(imageFilePath);
 
             System.out.println("result:" + result);
-            return new JsonResult(true, "图片接收成功并处理");
+            ImageFile imageFile = new ImageFile();
+            imageFile.setPath(imageFilePath);
+            imageFile.setCode(result);
+            imageFile.setUploadTime(LocalDateTimeUtil.format(LocalDateTime.now(),
+                    DateTimeFormatterEnums.YYYY_MM_DD_HH_MM_SS.getPattern()));
+            if (!StringUtils.isEmpty(result)) {
+                imageFile.setFlag(RecogCodeEnums.SUCCESS.getCode());
+                imageFileService.save(imageFile);
+                return new JsonResult(true, "编号识别成功", result);
+            } else {
+                imageFile.setFlag(RecogCodeEnums.FAILURE.getCode());
+                imageFileService.save(imageFile);
+                return new JsonResult(false, "编号识别失败, 结果为空");
+            }
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("图片处理异常");
