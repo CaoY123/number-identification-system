@@ -46,7 +46,7 @@
                             <el-main v-show="showContent === 'page1'">
                                 <div class="upload-container">
                                     <div class="upload-left">
-                                        <img v-if="imageSrc" :src="imageSrc" class="uploaded-image"> <!-- 添加这一行 -->
+                                        <img v-if="imageSrc" :src="imageSrc" class="uploaded-image">
                                         <el-form ref="imageUploadForm" :model="imageUploadForm" v-show="imageUploadVisible"
                                                  hide-required-asterisk="false" label-width="80px">
                                             <el-form-item class="select-image-button" label="选择图片" prop="image">
@@ -74,7 +74,7 @@
                             </el-main>
                         </el-container>
                         <el-footer>
-                            @CopyRight 2023 by YourName.
+                            @CopyRight 2023 by CaoYang.
                         </el-footer>
                     </div>
                 </div>
@@ -197,7 +197,7 @@
                     data: formData,
                     success: function (data) {
                         if (data.success) {
-                            _this.$message.success('图片上传成功');
+                            _this.$message.success('图片识别成功');
                             if (data.data) { // 使用 data.data 而不是 data.recognizedText
                                 _this.recognizedText = data.data;
                             } else {
@@ -207,7 +207,7 @@
                     },
                     error: function (data) {
                         console.log('error:' + JSON.stringify(data));
-                        _this.$message.error('图片上传失败');
+                        _this.$message.error('图片识别失败');
                     }
                 });
             },
@@ -409,28 +409,35 @@
 
     .upload-container {
         display: flex;
-        flex-direction: row;
-        align-items: flex-start;
-        justify-content: space-between;
-        width: 100%;
-    }
-
-    .upload-left, .upload-right {
-        width: 50%;
+        justify-content: space-around;
+        align-items: center;
+        gap: 30px;
+        margin: 20px 0;
+        padding-left: 50px; /* 整体向右移动 */
     }
 
     .upload-left {
-        padding-right: 20px; /* 添加右边距 */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        font-weight: bold; /* 字体加粗 */
     }
 
     .upload-right {
-        padding-left: 20px; /* 添加左边距 */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-weight: bold; /* 字体加粗 */
     }
 
     .uploaded-image {
-        max-width: 100%;
+        width: 300px;
         height: auto;
-        margin-bottom: 20px;
+        object-fit: contain;
+        border: 1px solid #ccc;
+        padding: 5px;
+        border-radius: 5px;
     }
 
     .select-image-button,
@@ -470,15 +477,12 @@
     }
 
     .el-menu-vertical-demo {
-        border-right: 1px solid #ebeef5;
+        /*border-right: 1px solid #ebeef5;*/
     }
 
     .el-menu-item {
-        color: #ffffff;
-    }
-
-    .el-menu-item:hover {
-        color: #409eff;
+        /*color: #ffffff;*/
+        background-color: transparent !important;
     }
 
     body, html {
@@ -506,6 +510,12 @@
     .head-right {
         float: right;
         margin-top: 20px;
+    }
+
+    .select-image-button input[type="file"],
+    .upload-image-button .el-button {
+        font-size: 16px;
+        padding: 6px 6px;
     }
 
 </style>
