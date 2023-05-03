@@ -27,41 +27,41 @@
 <div id="login" style="text-align: center;">
     <div style="margin: 120px auto 0;width: 500px;">
         <el-container>
-            <el-header>集装箱编号识别系统</el-header>
+            <el-header style="font-size: 30px">集装箱编号识别系统</el-header>
             <el-main>
                 <el-form ref="loginForm" :model="loginForm" v-show="loginVisible" :rules="loginRules"
                          hide-required-asterisk="false" label-width="80px">
-                    <el-form-item label="用户名" prop="name">
+                    <el-form-item label="用户名" prop="name" class="form-label">
                         <el-input v-model="loginForm.name"></el-input>
                     </el-form-item>
-                    <el-form-item label="密码" prop="password">
+                    <el-form-item label="密码" prop="password" class="form-label">
                         <el-input type="password" v-model="loginForm.password" suffix-icon="el-icon-view"></el-input>
                     </el-form-item>
 
                     <el-form-item>
-                        <el-button type="primary" v-on:click="loginSubmit">登录</el-button>
+                        <el-button type="primary" v-on:click="loginSubmit" class="form-label">登录</el-button>
                     </el-form-item>
-                    还没有账户？立即<a @click="switchForm('loginForm')">注册</a>
+                    还没有账户？立即<a @click="switchForm('loginForm')" class="form-label">注册</a>
                 </el-form>
 
                 <el-form ref="registerForm" :model="registerForm" v-show="registerVisible" :rules="registerRules" label-width="80px">
-                    <el-form-item label="用户名" prop="name">
+                    <el-form-item label="用户名" prop="name" class="form-label">
                         <el-input v-model="registerForm.name"></el-input>
                     </el-form-item>
-                    <el-form-item label="密码" prop="password">
+                    <el-form-item label="密码" prop="password" class="form-label">
                         <el-input type="password" v-model="registerForm.password"></el-input>
                     </el-form-item>
-                    <el-form-item label="重复密码" prop="rePassword">
+                    <el-form-item label="重复密码" prop="rePassword" class="form-label">
                         <el-input type="password" v-model="registerForm.rePassword"></el-input>
                     </el-form-item>
-                    <el-form-item label="地址" prop="address">
+                    <el-form-item label="地址" prop="address" class="form-label">
                         <el-input v-model="registerForm.address"></el-input>
                     </el-form-item>
 
                     <el-form-item>
-                        <el-button type="primary" v-on:click="registerSubmit">注册</el-button>
+                        <el-button type="primary" v-on:click="registerSubmit" class="form-label">注册</el-button>
                     </el-form-item>
-                    已有账户？请<a @click="switchForm">登录</a>
+                    已有账户？请<a @click="switchForm" class="form-label">登录</a>
                 </el-form>
             </el-main>
         </el-container>
@@ -187,6 +187,19 @@
         color: #409EFF;
         cursor: pointer;
         text-decoration-line: underline;
+    }
+
+    body {
+        background-image: url('https://seopic.699pic.com/photo/50082/5341.jpg_wh1200.jpg');
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+    }
+
+    .form-label .el-form-item__label {
+        font-weight: bold;
+        color: #333;
     }
 </style>
 </body>
