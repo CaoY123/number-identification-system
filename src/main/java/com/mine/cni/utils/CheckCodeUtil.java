@@ -30,6 +30,94 @@ public class CheckCodeUtil {
         }
     }
 
+    public static String repair(String code) {
+        if (code == null || code.length() == 0) {
+            throw new RuntimeException("传入的码值为空");
+        }
+        if (code.length() < 10 || code.length() > 11) {
+            throw new RuntimeException("传入的码值长度出错，不为10或11");
+        }
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < 4; i++) {
+            char ch = code.charAt(i);
+            if (ch < 'A' || ch > 'Z') {
+                repairAlphabet(sb, ch);
+            } else {
+                sb.append(ch);
+            }
+        }
+
+        for (int i = 4; i < 10; i++) {
+            char ch = code.charAt(i);
+            if (ch < '0' || ch > '9') {
+                repairNumber(sb, ch);
+            } else {
+                sb.append(ch);
+            }
+        }
+
+        return new String(sb);
+    }
+
+    private static void repairAlphabet(StringBuffer sb, char ch){
+        char cEnd = ' ';
+        switch (ch) {
+            case '0':
+                cEnd = 'O';
+                break;
+            case '1':
+                cEnd = 'I';
+                break;
+            case '2':
+                cEnd = 'Z';
+                break;
+            case '4':
+                cEnd = 'A';
+                break;
+            case '5':
+                cEnd = 'S';
+                break;
+            case '7':
+                cEnd = 'T';
+                break;
+            case '8':
+                cEnd = 'B';
+                break;
+        }
+        sb.append(cEnd);
+    }
+
+    private static void repairNumber(StringBuffer sb, char ch) {
+        char cEnd = ' ';
+        switch (ch) {
+            case 'A':
+                cEnd = '4';
+                break;
+            case 'B':
+                cEnd = '8';
+                break;
+            case 'D':
+                cEnd = '0';
+                break;
+            case 'I':
+                cEnd = '1';
+                break;
+            case 'O':
+                cEnd = '0';
+                break;
+            case 'S':
+                cEnd = '5';
+                break;
+            case 'T':
+                cEnd = '7';
+                break;
+            case 'Z':
+                cEnd = '2';
+                break;
+        }
+        sb.append(cEnd);
+    }
+
     public static int calculate(String code) {
         if (StringUtils.isEmpty(code)) {
             return -1;
@@ -40,6 +128,6 @@ public class CheckCodeUtil {
             sum += map.get(code.charAt(i)) * Math.pow(2, i);
         }
 
-        return sum % 11;
+        return sum % 11 % 10;
     }
 }

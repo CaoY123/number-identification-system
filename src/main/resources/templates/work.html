@@ -35,7 +35,6 @@
             <el-menu :default-active="'1'" class="el-menu-vertical-demo" @select="handleSelect">
                 <el-menu-item index="1" class="el-menu-item" @click="showContent = 'page1'">上传图片进行识别</el-menu-item>
 <!--                <el-menu-item index="2" class="el-menu-item" @click="showHistory">识别历史</el-menu-item>-->
-<!--                <el-menu-item index="3" class="el-menu-item" @click="showContent='page3'">用户管理</el-menu-item>-->
             </el-menu>
         </el-aside>
         <el-container>
@@ -72,6 +71,7 @@
                                     </div>
                                 </div>
                             </el-main>
+                            <el-main v-show="showContent === 'page2'">你好啊</el-main>
                         </el-container>
                         <el-footer>
                             @CopyRight 2023 by CaoYang.
@@ -382,6 +382,29 @@
                     }
                 });
             },
+            showHistory: function () {
+                this.showComponent = 'page2'
+                let _this = this; // 为了在ajax中使用this.$message，先把vue的this赋值给_this
+                $.ajax({
+                    url: 'recognize/history',
+                    type: 'GET',
+                    async: true,
+                    data: this.imageFiles,
+                    success: function (data) {
+                        console.log('success:' + JSON.stringify(data));
+                        if (data.success) {
+                            window.localStorage.setItem('imageFiles', JSON.stringify(data.data.imageFiles));
+                            console.log(data)
+                            window.location.href = '/api/recognize';
+                        } else {
+                            _this.$message.error(data.msg);
+                        }
+                    },
+                    error: function (data) {
+                        console.log('error:' + JSON.stringify(data));
+                    }
+                });
+            },
         }
     });
 </script>
@@ -394,7 +417,7 @@
     }
 
     .el-aside {
-        background-color: #3a8ee6;
+        background-color: #8cc5ff;
         width: 200px;
         margin: 0;
         height: calc(100% - 60px); /* 减去标题栏高度 */
@@ -404,7 +427,7 @@
 
     .el-menu-vertical-demo {
         border-right: 1px solid #303133;
-        background-color: blue;
+        /*background-color: blue;*/
     }
 
     .upload-container {
@@ -476,13 +499,9 @@
         }
     }
 
-    .el-menu-vertical-demo {
-        /*border-right: 1px solid #ebeef5;*/
-    }
-
     .el-menu-item {
         /*color: #ffffff;*/
-        background-color: transparent !important;
+        /*background-color: transparent !important;*/
     }
 
     body, html {

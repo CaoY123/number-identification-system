@@ -17,9 +17,12 @@ import java.util.Map;
 public class CalcContainerNumberCheckCodeTest {
 
     public static void main(String[] args) {
-        String code = "LCGU8004378";
-        int result = CheckCodeUtil.calculate(code);
-        System.out.println("result: " + result);
+//        String code = "LCGU8004378";
+        String code = "TBJUA5816AU";
+        String repairCode = CheckCodeUtil.repair(code);
+        int checkNum = CheckCodeUtil.calculate(repairCode);
+        String resultCode = repairCode + checkNum;
+        System.out.println("result: " + resultCode);
     }
 
 }

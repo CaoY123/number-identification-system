@@ -11,6 +11,8 @@ import com.mine.cni.enums.ExceptionEnums;
 import com.mine.cni.enums.RecogCodeEnums;
 import com.mine.cni.exception.SystemException;
 import com.mine.cni.service.ImageFileService;
+import com.mine.cni.utils.CheckCodeUtil;
+import com.sun.org.apache.bcel.internal.classfile.Code;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,11 +21,13 @@ import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @author CaoY
@@ -86,6 +90,9 @@ public class RecognitionController extends CommonUserController {
                     DateTimeFormatterEnums.YYYY_MM_DD_HH_MM_SS.getPattern()));
             if (!StringUtils.isEmpty(result)) {
                 imageFile.setFlag(RecogCodeEnums.SUCCESS.getCode());
+                String repairCode = CheckCodeUtil.repair(result);
+                String resStr = repairCode + CheckCodeUtil.calculate(repairCode);
+                imageFile.setCode(resStr);
                 imageFileService.save(imageFile);
                 return new JsonResult(true, "编号识别成功", result);
             } else {
@@ -97,5 +104,16 @@ public class RecognitionController extends CommonUserController {
             e.printStackTrace();
             throw new RuntimeException("图片处理异常");
         }
+    }
+
+    @GetMapping("/history")
+    public JsonResult history(HttpServletRequest request) {
+
+        List<ImageFile> imageFiles = imageFileService.findAll();
+        JsonResult jsonResult = new JsonResult(true, "查询所哟识别记录成功！", imageFiles);
+        HttpSession session = request.getSession(true);
+        session.setAttribute("imageFiles", imageFiles);
+        session.setMaxInactiveInterval(12 * 60 * 60); // 设置过期时间为12h
+        return jsonResult;
     }
 }
